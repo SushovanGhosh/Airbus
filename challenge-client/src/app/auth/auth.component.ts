@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
+import { from } from 'rxjs';
 import { AuthService } from './auth.service';
 
 @Component({
@@ -24,10 +25,37 @@ export class AuthComponent implements OnInit {
     this.authForm.reset();
   }
 
-  onSubmit(form: NgForm) {
-    if (!form.valid) {
-      return;
+  validateForm(form: NgForm) : boolean{
+    this.error = '';
+    const username:string = form.value.username;
+    const email: string = form.value.email;
+    const password:string = form.value.password;
+    const confirmPassword: string = form.value.confirmPassword;
+    if (!this.isLoginMode && username.trim() === '') {
+      this.error = "Please enter a username";
+      return false;
     }
+    if (email.trim() === '') {
+      this.error = "Please enter an email";
+      return false;
+    }
+    if (password.trim() === '') {
+      this.error = "Please enter a password";
+      return false;
+    }
+    if(!this.isLoginMode && confirmPassword.trim() === ''){
+      this.error = "Please re-write the password";
+      return false;
+    }
+    if(!this.isLoginMode && password === confirmPassword){
+      this.error = "Passwords doesn't match";
+      return false;
+    }
+    return true;
+  }
+
+  onSubmit(form: NgForm) {
+    if(this.validateForm(form)){
     const username = form.value.username;
     const email = form.value.email;
     const password = form.value.password
@@ -46,7 +74,9 @@ export class AuthComponent implements OnInit {
           this.error = error;
         });
     }
+  }
     form.reset();
   }
 
+  
 }
