@@ -56,7 +56,7 @@ public class ProductServiceImpl implements ProductService {
 		logger.debug("START :: ProductServiceImpl :: saveProduct :: {}", product.getProductName());
 		ProductEntity productEntity = null;
 		if (product != null)
-			productEntity = productDAO.save(productEntity);
+			productEntity = productDAO.save(createProductEntityFromProduct(product));
 		product = createProductFromProductEntity(productEntity);
 		logger.debug("END :: ProductServiceImpl :: saveProduct :: {}", product.getProductName());
 		return product;

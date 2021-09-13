@@ -1,0 +1,202 @@
+<div class="table-responsive">
+  <div class="alert alert-danger" *ngIf="error">
+    <p>{{ error }}</p>
+  </div>
+  <table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <td colspan="4">
+          <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+          <input
+            type="text"
+            size="50"
+            name="search"
+            placeholder="Search Product Category"
+            style="width: auto"
+            (keydown.enter)="onSearch($event)"
+          />
+        </td>
+        <td class="text-center">
+          <a class="btn btn-primary float-right" (click)="openModal()">Add Product</a>
+        </td>
+      </tr>
+      <tr>
+        <th scope="col" class="text-center">Product Name</th>
+        <th scope="col" class="text-center">Product Category</th>
+        <th scope="col" class="text-center">Product Description</th>
+        <th scope="col" class="text-center">Units</th>
+        <th scope="col" class="text-center">Action</th>
+      </tr>
+      <tr>
+        <th scope="col" class="text-center">
+          <input
+            type="text"
+            name="filterProductName"
+            [(ngModel)]="filterProductName"
+            placeholder="Filter By Product"
+            style="width: auto"
+            (keyup)="onFilter('name', $event)"
+          />
+        </th>
+        <th scope="col" class="text-center">
+          <input
+            type="text"
+            name="filterCategory"
+            [(ngModel)]="filterCategory"
+            placeholder="Filter By Category"
+            style="width: auto"
+            (keyup)="onFilter('category', $event)"
+          />
+        </th>
+        <th></th>
+        <th scope="col" class="text-center">
+          <input
+            type="number"
+            name="filterUnits"
+            [(ngModel)]="filterUnits"
+            placeholder="Filter By Units"
+            (keyup)="onFilter('units', $event)"
+          />
+        </th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngIf="products?.length == 0">
+        <td class="text-center" colspan="5" style="color: red">
+          No records found
+        </td>
+      </tr>
+      <tr
+        *ngFor="let product of products | paginate: {id: 'listing_pagination',itemsPerPage: itemsPerPage, currentPage: page,totalItems: totalRecords}; let i = index"
+      >
+        <td scope="row">{{ product.productName }}</td>
+        <td scope="row">{{ product.productCategory }}</td>
+        <td scope="row">{{ product.productDesc }}</td>
+        <td scope="row">{{ product.units }}</td>
+        <td scope="row" class="text-center">
+          <button class="btn btn-success" type="button" (click)="onEdit(i)">
+            Edit
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="text-center">
+    <pagination-controls
+      id="listing_pagination"
+      maxSize="5"
+      directionLinks="true"
+      (pageChange)="page = $event"
+    ></pagination-controls>
+  </div>
+
+  <div
+    class="modal"
+    id="myModal"
+    [style.display]="showModal ? 'block' : 'none'"
+  >
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            {{ isEdit ? "Edit Product" : "Add New Product" }}
+          </h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            (click)="hideModal()"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <form
+            id="modalForm"
+            #modalForm="ngForm"
+            (ngSubmit)="onSubmit(modalForm)"
+          >
+            <div class="form-group">
+              <label for="name"><strong>Product Name</strong></label>
+              <input
+                type="text"
+                id="name"
+                class="form-control"
+                ngModel
+                name="name"
+                required
+                #name="ngModel"
+              />
+              <span class="error-block" *ngIf="!name.valid && name.touched"
+                >Please enter a valid product name</span
+              >
+            </div>
+            <div class="form-group">
+              <label for="category"><strong>Product Category</strong></label>
+              <input
+                type="text"
+                id="category"
+                class="form-control"
+                ngModel
+                name="category"
+                required
+                #category="ngModel"
+              />
+              <span class="error-block" *ngIf="!category.valid && category.touched"
+                >Please enter a valid product category</span
+              >
+            </div>
+            <div class="form-group">
+              <label for="description"><strong>Description</strong></label>
+              <input
+                type="text"
+                id="description"
+                class="form-control"
+                ngModel
+                name="description"
+                required
+                #description="ngModel"
+              />
+              <span class="error-block" *ngIf="!description.valid && description.touched"
+                >Please enter a product description</span
+              >
+            </div>
+            <div class="form-group">
+              <label for="units"><strong>Units</strong></label>
+              <input
+                type="number"
+                id="units"
+                class="form-control"
+                ngModel
+                name="units"
+                required
+                #units="ngModel"
+              />
+              <span class="error-block" *ngIf="!units.valid && units.touched"
+                >Please enter a product units</span
+              >
+            </div>
+          </form>
+        </div>
+        <div className="modal-footer">
+          <button
+            form="modalForm"
+            class="btn btn-primary btn-block float-right m-3"
+            type="submit"
+            [disabled]="!modalForm.valid"
+          >
+            {{ isEdit ? "Update" : "Add" }}
+          </button>
+          <button
+            class="btn btn-secondary btn-block float-right"
+            type="button"
+            (click)="hideModal()"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

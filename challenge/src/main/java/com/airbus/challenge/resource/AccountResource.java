@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +35,7 @@ import com.airbus.challenge.security.JwtTokenProvider;
 import com.airbus.challenge.service.UserService;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/auth")
 public class AccountResource {
 
@@ -49,6 +52,9 @@ public class AccountResource {
 
 	@Autowired
 	JwtTokenProvider jwtTokenProvider;
+	
+	@Value("${app.jwtExpirationInMs}")
+	private int jwtExpirationInMs;
 
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -63,12 +69,13 @@ public class AccountResource {
 
 		String jwt = jwtTokenProvider.generateToken(authentication);
 		logger.debug("END :: AccountResource :: authenticateUser");
-		return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, user.getUsername()));
+		return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, user.getUsername(), user.getId(), jwtExpirationInMs));
 	}
 
 	@PostMapping("/signup")
-	public ResponseEntity<ApiResponse> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+	public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
 
+		logger.debug("START :: AccountResource :: registerUser");
 		// Creating user's account
 		User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(), signUpRequest.getPassword());
 
@@ -80,9 +87,14 @@ public class AccountResource {
 		} catch (UserServiceException e) {
 			return new ResponseEntity(new ApiResponse(false, e.getMessage(), "email"), HttpStatus.BAD_REQUEST);
 		}
-		URI location = ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/users/{username}")
-				.buildAndExpand(result.getUsername()).toUri();
-
-		return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully", null));
+//		URI location = ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/users/{username}")
+//				.buildAndExpand(result.getUsername()).toUri();
+		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signUpRequest.getUsername(), signUpRequest.getPassword()));
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		String jwt = jwtTokenProvider.generateToken(authentication);
+		
+		logger.debug("END :: AccountResource :: registerUser");
+//		return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully", null));
+		return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, signUpRequest.getUsername(), user.getId(),jwtExpirationInMs));
 	}
 }

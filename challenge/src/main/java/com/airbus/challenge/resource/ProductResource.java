@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,7 @@ import com.airbus.challenge.model.Product;
 import com.airbus.challenge.service.ProductService;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/v1")
 public class ProductResource {
 
@@ -52,7 +54,7 @@ public class ProductResource {
 			productList = productService.getProductsByCategory(category);
 		}catch (ProductServiceException e) {
 			logger.error("Invalid Category type :: {}", category);
-			Error error = new Error(215, "Selected category is invalid");  
+			Error error = new Error(215, e.getMessage());  
 			return new ResponseEntity<Error>(error, HttpStatus.BAD_REQUEST);
 		}
 		logger.debug("END :: ProductResource :: getProductsByCategory :: {}", category);

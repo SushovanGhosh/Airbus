@@ -83,18 +83,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.css",
                         "/**/*.js")
                         .permitAll()
-                    .antMatchers("airbus/auth/**")
+                    .antMatchers("/auth/**")
                         .permitAll()
-                    .antMatchers("/airbus/swagger-ui")
+                    .antMatchers("/swagger-ui.html/**")
                     	.permitAll()
-                    .antMatchers("/airbus/v2/api-docs")
+                    .antMatchers("/swagger-ui/**")
+                    	.permitAll()	
+                    .antMatchers("/v2/api-docs/**")
                     	.permitAll()
-//                    .antMatchers("/api/user/checkUsernameAvailability", "/api/user/checkEmailAvailability")
-//                        .permitAll()
-//                    .antMatchers(HttpMethod.GET, "/api/polls/**", "/api/users/**")
-//                        .permitAll()
-                    .anyRequest()
-                    .authenticated();
+                    .anyRequest().permitAll();
 
         // Add our custom JWT security filter
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
