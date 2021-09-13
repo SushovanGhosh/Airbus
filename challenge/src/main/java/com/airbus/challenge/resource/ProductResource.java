@@ -24,6 +24,10 @@ import com.airbus.challenge.model.Error;
 import com.airbus.challenge.model.Product;
 import com.airbus.challenge.service.ProductService;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/v1")
@@ -34,6 +38,8 @@ public class ProductResource {
 	@Autowired
 	private ProductService productService;
 
+	@ApiOperation(value="Get All Products", notes = "Retrieve all the products")
+	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", required = true, dataType = "string", paramType = "header")})
 	@GetMapping(path = "/products", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<List<Product>> getAllProducts() {
@@ -44,6 +50,8 @@ public class ProductResource {
 		return new ResponseEntity<List<Product>>(productList, HttpStatus.OK);
 	}
 
+	@ApiOperation(value="Get Products By Category", notes = "Retrieve any products based on a specific category")
+	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", required = true, dataType = "string", paramType = "header")})
 	@GetMapping(path = "/products/{category}", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<?> getProductsByCategory(@PathVariable("category") String category) {
@@ -61,6 +69,8 @@ public class ProductResource {
 		return new ResponseEntity<List<Product>>(productList, HttpStatus.OK);
 	}
 
+	@ApiOperation(value="Save a Product", notes = "Persist any product by providing appropriate params")
+	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", required = true, dataType = "string", paramType = "header")})
 	@PostMapping(path = "/products", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<Product> saveProduct(@RequestBody Product product) {
@@ -71,6 +81,8 @@ public class ProductResource {
 		return new ResponseEntity<Product>(product, HttpStatus.OK);
 	}
 	
+	@ApiOperation(value="Update a Product", notes = "Update any product by providing appropriate params")
+	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", required = true, dataType = "string", paramType = "header")})
 	@PutMapping(path = "/products", consumes = {MediaType.APPLICATION_JSON_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<?> updateProduct(@RequestBody Product product) {

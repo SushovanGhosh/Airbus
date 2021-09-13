@@ -34,6 +34,8 @@ import com.airbus.challenge.response.JwtAuthenticationResponse;
 import com.airbus.challenge.security.JwtTokenProvider;
 import com.airbus.challenge.service.UserService;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/auth")
@@ -56,6 +58,7 @@ public class AccountResource {
 	@Value("${app.jwtExpirationInMs}")
 	private int jwtExpirationInMs;
 
+	@ApiOperation(value="Sign in a user", notes = "Login to the application with appropriate params and retrieve token as a reponse")
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
@@ -72,6 +75,7 @@ public class AccountResource {
 		return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, user.getUsername(), user.getId(), jwtExpirationInMs));
 	}
 
+	@ApiOperation(value="Register a user", notes = "Register to the application with appropriate params and retrieve token as a reponse")
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
 

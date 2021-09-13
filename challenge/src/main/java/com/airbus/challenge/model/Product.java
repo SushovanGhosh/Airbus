@@ -1,11 +1,20 @@
 package com.airbus.challenge.model;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(description = "Details about the product")
 public class Product {
 
+	@ApiModelProperty(notes = "The unique id of a product")
 	private String productId;
+	@ApiModelProperty(notes = "The category of a product")
 	private String productCategory;
+	@ApiModelProperty(notes = "The name of a product")
 	private String productName;
+	@ApiModelProperty(notes = "The description of a product")
 	private String productDesc;
+	@ApiModelProperty(notes = "The number of units of a product")
 	private int units;
 	
 	public Product() {
