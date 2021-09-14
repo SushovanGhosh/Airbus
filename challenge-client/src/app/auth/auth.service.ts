@@ -23,7 +23,7 @@ export class AuthService {
 
   signup(username: string, email: string, password: string) {
     return this.http
-      .post<AuthResponseData>(this.ROOT_URL+'/airbus/auth/signup', {
+      .post<AuthResponseData>(this.LOCAL_URL+'/airbus/auth/signup', {
         username: username,
         email: email,
         password: password,
@@ -44,7 +44,7 @@ export class AuthService {
 
   login(username: string, password: string) {
     return this.http
-      .post<AuthResponseData>(this.ROOT_URL+'/airbus/auth/signin', {
+      .post<AuthResponseData>(this.LOCAL_URL+'/airbus/auth/signin', {
         usernameOrEmail: username,
         password: password,
       })

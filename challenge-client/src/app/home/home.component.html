@@ -56,6 +56,7 @@
             [(ngModel)]="filterUnits"
             placeholder="Filter By Units"
             (keyup)="onFilter('units', $event)"
+            (change)="onFilter('units', $event)"
           />
         </th>
         <th></th>
